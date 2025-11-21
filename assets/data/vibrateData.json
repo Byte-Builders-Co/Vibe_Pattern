@@ -1,0 +1,104 @@
+{
+  "patterns": [
+    {
+      "id": "1",
+      "name": "Short Pulse",
+      "pattern": [200, 200, 100]
+    },
+    {
+      "id": "2",
+      "name": "Long Buzz",
+      "pattern": [500, 500, 500, 500]
+    },
+    {
+      "id": "3",
+      "name": "Wave Pattern",
+      "pattern": [100, 300, 100, 300, 100, 100, 300, 100, 300, 100]
+    },
+    {
+      "id": "4",
+      "name": "Heartbeat",
+      "pattern": [200, 80, 200]
+    },
+    {
+      "id": "5",
+      "name": "Double Tap",
+      "pattern": [150, 80, 150]
+    },
+    {
+      "id": "6",
+      "name": "Triple Tap",
+      "pattern": [120, 80, 120, 80, 120]
+    },
+    {
+      "id": "7",
+      "name": "Rapid Fire",
+      "pattern": [80, 50, 80, 50, 80, 50, 80]
+    },
+    {
+      "id": "8",
+      "name": "Strong Pulse",
+      "pattern": [300, 150, 300]
+    },
+    {
+      "id": "9",
+      "name": "Soft Pulse",
+      "pattern": [80, 100, 80]
+    },
+    {
+      "id": "10",
+      "name": "Alarm Burst",
+      "pattern": [400, 200, 400, 200, 400]
+    },
+    {
+      "id": "11",
+      "name": "SOS Pattern",
+      "pattern": [100, 100, 100, 100, 300, 300, 300, 100, 100, 100]
+    },
+    {
+      "id": "12",
+      "name": "Slow Wave",
+      "pattern": [200, 200, 200, 200, 200]
+    },
+    {
+      "id": "13",
+      "name": "Fast Wave",
+      "pattern": [100, 100, 100, 100, 100]
+    },
+    {
+      "id": "14",
+      "name": "Crescendo",
+      "pattern": [100, 100, 150, 100, 200, 100]
+    },
+    {
+      "id": "15",
+      "name": "Decrescendo",
+      "pattern": [200, 100, 150, 100, 100, 100]
+    },
+    {
+      "id": "16",
+      "name": "Warning Alert",
+      "pattern": [500, 100, 200, 100, 200]
+    },
+    {
+      "id": "17",
+      "name": "Tiny Ticks",
+      "pattern": [60, 40, 60, 40, 60, 40, 60]
+    },
+    {
+      "id": "18",
+      "name": "Heartbeat 2",
+      "pattern": [180, 80, 180, 400, 180, 80, 180]
+    },
+    {
+      "id": "19",
+      "name": "Motor Start",
+      "pattern": [100, 50, 200, 50, 300]
+    },
+    {
+      "id": "20",
+      "name": "Engine Vibrate",
+      "pattern": [150, 50, 150, 50, 150, 50, 150]
+    }
+  ]
+}
