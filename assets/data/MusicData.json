@@ -1,0 +1,64 @@
+{
+  "music": [
+    {
+      "id": "1",
+      "musicName": "Calm Melody",
+      "fileName": "calm_melody.mp3"
+    },
+    {
+      "id": "2",
+      "musicName": "Digital Beep",
+      "fileName": "digital_beep.mp3"
+    },
+    {
+      "id": "3",
+      "musicName": "Soft Piano",
+      "fileName": "soft_piano.mp3"
+    },
+    {
+      "id": "4",
+      "musicName": "Relax Tone",
+      "fileName": "relax_tone.mp3"
+    },
+    {
+      "id": "5",
+      "musicName": "Alert Ring",
+      "fileName": "alert_ring.mp3"
+    },
+    {
+      "id": "6",
+      "musicName": "Notification Pop",
+      "fileName": "notification_pop.mp3"
+    },
+    {
+      "id": "7",
+      "musicName": "Morning Bell",
+      "fileName": "morning_bell.mp3"
+    },
+    {
+      "id": "8",
+      "musicName": "Classic Tone",
+      "fileName": "classic_tone.mp3"
+    },
+    {
+      "id": "9",
+      "musicName": "Soft Chime",
+      "fileName": "soft_chime.mp3"
+    },
+    {
+      "id": "10",
+      "musicName": "Wave Sound",
+      "fileName": "wave_sound.mp3"
+    },
+    {
+      "id": "11",
+      "musicName": "Warm Echo",
+      "fileName": "warm_echo.mp3"
+    },
+    {
+      "id": "12",
+      "musicName": "Crystal Drop",
+      "fileName": "crystal_drop.mp3"
+    }
+  ]
+}

@@ -11,7 +11,7 @@ import {
   View,
 } from "react-native";
 
-export default function UserScreen() {
+export default function HomeScreen() {
   const patterns = getVibrationPatterns();
   const [activePatternId, setActivePatternId] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState(0);
@@ -20,7 +20,6 @@ export default function UserScreen() {
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const isRunningRef = useRef(false);
 
-  // Clean up intervals on unmount
   useEffect(() => {
     return () => {
       if (intervalRef.current) {
