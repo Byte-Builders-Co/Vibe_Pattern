@@ -6,7 +6,9 @@
       "pattern": [200, 200, 100],
       "icon": "📊",
       "category": "basic",
-      "premium": false
+      "premium": false,
+      "frequency": 1.0,
+      "intensity": "medium"
     },
     {
       "id": "2",
@@ -14,7 +16,9 @@
       "pattern": [500, 500, 500, 500],
       "icon": "◈",
       "category": "basic",
-      "premium": false
+      "premium": false,
+      "frequency": 0.5,
+      "intensity": "high"
     },
     {
       "id": "3",
@@ -22,7 +26,9 @@
       "pattern": [100, 300, 100, 300, 100, 100, 300, 100, 300, 100],
       "icon": "☀️",
       "category": "rhythm",
-      "premium": false
+      "premium": false,
+      "frequency": 1.2,
+      "intensity": "medium"
     },
     {
       "id": "4",
@@ -30,7 +36,9 @@
       "pattern": [200, 80, 200],
       "icon": "⬡",
       "category": "health",
-      "premium": false
+      "premium": false,
+      "frequency": 1.5,
+      "intensity": "medium"
     },
     {
       "id": "5",
@@ -38,7 +46,9 @@
       "pattern": [150, 80, 150],
       "icon": "◎",
       "category": "basic",
-      "premium": false
+      "premium": false,
+      "frequency": 1.8,
+      "intensity": "low"
     },
     {
       "id": "6",
@@ -46,7 +56,9 @@
       "pattern": [120, 80, 120, 80, 120],
       "icon": "❋",
       "category": "basic",
-      "premium": false
+      "premium": false,
+      "frequency": 2.0,
+      "intensity": "low"
     },
     {
       "id": "7",
@@ -54,7 +66,9 @@
       "pattern": [80, 50, 80, 50, 80, 50, 80],
       "icon": "✦",
       "category": "intense",
-      "premium": true
+      "premium": true,
+      "frequency": 3.0,
+      "intensity": "high"
     },
     {
       "id": "8",
@@ -62,7 +76,9 @@
       "pattern": [300, 150, 300],
       "icon": "⚙️",
       "category": "intense",
-      "premium": true
+      "premium": true,
+      "frequency": 1.2,
+      "intensity": "high"
     },
     {
       "id": "9",
@@ -70,7 +86,9 @@
       "pattern": [80, 100, 80],
       "icon": "✿",
       "category": "gentle",
-      "premium": false
+      "premium": false,
+      "frequency": 1.0,
+      "intensity": "low"
     },
     {
       "id": "10",
@@ -78,7 +96,9 @@
       "pattern": [400, 200, 400, 200, 400],
       "icon": "◇",
       "category": "alert",
-      "premium": true
+      "premium": true,
+      "frequency": 0.8,
+      "intensity": "high"
     },
     {
       "id": "11",
@@ -86,7 +106,9 @@
       "pattern": [100, 100, 100, 100, 300, 300, 300, 100, 100, 100],
       "icon": "📊",
       "category": "alert",
-      "premium": true
+      "premium": true,
+      "frequency": 1.5,
+      "intensity": "high"
     },
     {
       "id": "12",
@@ -94,7 +116,9 @@
       "pattern": [200, 200, 200, 200, 200],
       "icon": "◈",
       "category": "rhythm",
-      "premium": false
+      "premium": false,
+      "frequency": 0.6,
+      "intensity": "medium"
     },
     {
       "id": "13",
@@ -102,7 +126,9 @@
       "pattern": [100, 100, 100, 100, 100],
       "icon": "☀️",
       "category": "rhythm",
-      "premium": false
+      "premium": false,
+      "frequency": 2.5,
+      "intensity": "medium"
     },
     {
       "id": "14",
@@ -110,7 +136,9 @@
       "pattern": [100, 100, 150, 100, 200, 100],
       "icon": "⬡",
       "category": "rhythm",
-      "premium": true
+      "premium": true,
+      "frequency": 1.8,
+      "intensity": "medium"
     },
     {
       "id": "15",
@@ -118,7 +146,9 @@
       "pattern": [200, 100, 150, 100, 100, 100],
       "icon": "◎",
       "category": "rhythm",
-      "premium": true
+      "premium": true,
+      "frequency": 1.8,
+      "intensity": "medium"
     },
     {
       "id": "16",
@@ -126,7 +156,9 @@
       "pattern": [500, 100, 200, 100, 200],
       "icon": "❋",
       "category": "alert",
-      "premium": true
+      "premium": true,
+      "frequency": 1.0,
+      "intensity": "high"
     },
     {
       "id": "17",
@@ -134,7 +166,9 @@
       "pattern": [60, 40, 60, 40, 60, 40, 60],
       "icon": "✦",
       "category": "gentle",
-      "premium": false
+      "premium": false,
+      "frequency": 3.5,
+      "intensity": "low"
     },
     {
       "id": "18",
@@ -142,7 +176,9 @@
       "pattern": [180, 80, 180, 400, 180, 80, 180],
       "icon": "⚙️",
       "category": "health",
-      "premium": false
+      "premium": false,
+      "frequency": 1.2,
+      "intensity": "medium"
     },
     {
       "id": "19",
@@ -150,7 +186,9 @@
       "pattern": [100, 50, 200, 50, 300],
       "icon": "✿",
       "category": "intense",
-      "premium": true
+      "premium": true,
+      "frequency": 2.0,
+      "intensity": "high"
     },
     {
       "id": "20",
@@ -158,7 +196,9 @@
       "pattern": [150, 50, 150, 50, 150, 50, 150],
       "icon": "◇",
       "category": "intense",
-      "premium": true
+      "premium": true,
+      "frequency": 2.8,
+      "intensity": "high"
     },
     {
       "id": "21",
@@ -166,7 +206,9 @@
       "pattern": [120, 150, 120, 150, 120],
       "icon": "🌊",
       "category": "gentle",
-      "premium": false
+      "premium": false,
+      "frequency": 1.5,
+      "intensity": "low"
     },
     {
       "id": "22",
@@ -174,7 +216,9 @@
       "pattern": [250, 100, 250, 100, 250, 100, 250],
       "icon": "⚡",
       "category": "intense",
-      "premium": true
+      "premium": true,
+      "frequency": 1.8,
+      "intensity": "high"
     },
     {
       "id": "23",
@@ -182,7 +226,9 @@
       "pattern": [300, 200, 300, 200, 300],
       "icon": "🧘",
       "category": "gentle",
-      "premium": false
+      "premium": false,
+      "frequency": 0.7,
+      "intensity": "low"
     },
     {
       "id": "24",
@@ -190,7 +236,9 @@
       "pattern": [180, 100, 180, 100, 180, 100, 180],
       "icon": "🎵",
       "category": "rhythm",
-      "premium": false
+      "premium": false,
+      "frequency": 2.2,
+      "intensity": "medium"
     }
   ]
 }

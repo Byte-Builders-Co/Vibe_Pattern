@@ -500,10 +500,6 @@ export default function VibroScreen() {
 
   return (
     <View style={S.root}>
-      <View style={S.head}>
-        <Text style={S.title}>Vibro</Text>
-      </View>
-
       <View style={S.main}>
         <View style={S.spiral}>
           {playing && (
@@ -530,7 +526,7 @@ export default function VibroScreen() {
               onPress={toggle}
               activeOpacity={0.8}
             >
-              <Text style={S.playIco}>{playing ? "⏸" : "▶"}</Text>
+              <Text style={S.playIco}>{playing ? "|=|" : "▶"}</Text>
             </TouchableOpacity>
           </Animated.View>
         </View>
