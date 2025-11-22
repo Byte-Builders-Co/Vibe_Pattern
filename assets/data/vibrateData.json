@@ -3,102 +3,194 @@
     {
       "id": "1",
       "name": "Short Pulse",
-      "pattern": [200, 200, 100]
+      "pattern": [200, 200, 100],
+      "icon": "📊",
+      "category": "basic",
+      "premium": false
     },
     {
       "id": "2",
       "name": "Long Buzz",
-      "pattern": [500, 500, 500, 500]
+      "pattern": [500, 500, 500, 500],
+      "icon": "◈",
+      "category": "basic",
+      "premium": false
     },
     {
       "id": "3",
       "name": "Wave Pattern",
-      "pattern": [100, 300, 100, 300, 100, 100, 300, 100, 300, 100]
+      "pattern": [100, 300, 100, 300, 100, 100, 300, 100, 300, 100],
+      "icon": "☀️",
+      "category": "rhythm",
+      "premium": false
     },
     {
       "id": "4",
       "name": "Heartbeat",
-      "pattern": [200, 80, 200]
+      "pattern": [200, 80, 200],
+      "icon": "⬡",
+      "category": "health",
+      "premium": false
     },
     {
       "id": "5",
       "name": "Double Tap",
-      "pattern": [150, 80, 150]
+      "pattern": [150, 80, 150],
+      "icon": "◎",
+      "category": "basic",
+      "premium": false
     },
     {
       "id": "6",
       "name": "Triple Tap",
-      "pattern": [120, 80, 120, 80, 120]
+      "pattern": [120, 80, 120, 80, 120],
+      "icon": "❋",
+      "category": "basic",
+      "premium": false
     },
     {
       "id": "7",
       "name": "Rapid Fire",
-      "pattern": [80, 50, 80, 50, 80, 50, 80]
+      "pattern": [80, 50, 80, 50, 80, 50, 80],
+      "icon": "✦",
+      "category": "intense",
+      "premium": true
     },
     {
       "id": "8",
       "name": "Strong Pulse",
-      "pattern": [300, 150, 300]
+      "pattern": [300, 150, 300],
+      "icon": "⚙️",
+      "category": "intense",
+      "premium": true
     },
     {
       "id": "9",
       "name": "Soft Pulse",
-      "pattern": [80, 100, 80]
+      "pattern": [80, 100, 80],
+      "icon": "✿",
+      "category": "gentle",
+      "premium": false
     },
     {
       "id": "10",
       "name": "Alarm Burst",
-      "pattern": [400, 200, 400, 200, 400]
+      "pattern": [400, 200, 400, 200, 400],
+      "icon": "◇",
+      "category": "alert",
+      "premium": true
     },
     {
       "id": "11",
       "name": "SOS Pattern",
-      "pattern": [100, 100, 100, 100, 300, 300, 300, 100, 100, 100]
+      "pattern": [100, 100, 100, 100, 300, 300, 300, 100, 100, 100],
+      "icon": "📊",
+      "category": "alert",
+      "premium": true
     },
     {
       "id": "12",
       "name": "Slow Wave",
-      "pattern": [200, 200, 200, 200, 200]
+      "pattern": [200, 200, 200, 200, 200],
+      "icon": "◈",
+      "category": "rhythm",
+      "premium": false
     },
     {
       "id": "13",
       "name": "Fast Wave",
-      "pattern": [100, 100, 100, 100, 100]
+      "pattern": [100, 100, 100, 100, 100],
+      "icon": "☀️",
+      "category": "rhythm",
+      "premium": false
     },
     {
       "id": "14",
       "name": "Crescendo",
-      "pattern": [100, 100, 150, 100, 200, 100]
+      "pattern": [100, 100, 150, 100, 200, 100],
+      "icon": "⬡",
+      "category": "rhythm",
+      "premium": true
     },
     {
       "id": "15",
       "name": "Decrescendo",
-      "pattern": [200, 100, 150, 100, 100, 100]
+      "pattern": [200, 100, 150, 100, 100, 100],
+      "icon": "◎",
+      "category": "rhythm",
+      "premium": true
     },
     {
       "id": "16",
       "name": "Warning Alert",
-      "pattern": [500, 100, 200, 100, 200]
+      "pattern": [500, 100, 200, 100, 200],
+      "icon": "❋",
+      "category": "alert",
+      "premium": true
     },
     {
       "id": "17",
       "name": "Tiny Ticks",
-      "pattern": [60, 40, 60, 40, 60, 40, 60]
+      "pattern": [60, 40, 60, 40, 60, 40, 60],
+      "icon": "✦",
+      "category": "gentle",
+      "premium": false
     },
     {
       "id": "18",
       "name": "Heartbeat 2",
-      "pattern": [180, 80, 180, 400, 180, 80, 180]
+      "pattern": [180, 80, 180, 400, 180, 80, 180],
+      "icon": "⚙️",
+      "category": "health",
+      "premium": false
     },
     {
       "id": "19",
       "name": "Motor Start",
-      "pattern": [100, 50, 200, 50, 300]
+      "pattern": [100, 50, 200, 50, 300],
+      "icon": "✿",
+      "category": "intense",
+      "premium": true
     },
     {
       "id": "20",
       "name": "Engine Vibrate",
-      "pattern": [150, 50, 150, 50, 150, 50, 150]
+      "pattern": [150, 50, 150, 50, 150, 50, 150],
+      "icon": "◇",
+      "category": "intense",
+      "premium": true
+    },
+    {
+      "id": "21",
+      "name": "Gentle Flow",
+      "pattern": [120, 150, 120, 150, 120],
+      "icon": "🌊",
+      "category": "gentle",
+      "premium": false
+    },
+    {
+      "id": "22",
+      "name": "Power Surge",
+      "pattern": [250, 100, 250, 100, 250, 100, 250],
+      "icon": "⚡",
+      "category": "intense",
+      "premium": true
+    },
+    {
+      "id": "23",
+      "name": "Meditation",
+      "pattern": [300, 200, 300, 200, 300],
+      "icon": "🧘",
+      "category": "gentle",
+      "premium": false
+    },
+    {
+      "id": "24",
+      "name": "Rhythm Beat",
+      "pattern": [180, 100, 180, 100, 180, 100, 180],
+      "icon": "🎵",
+      "category": "rhythm",
+      "premium": false
     }
   ]
 }

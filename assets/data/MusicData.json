@@ -1,64 +1,109 @@
 {
-  "music": [
+  "musicTracks": [
     {
       "id": "1",
-      "musicName": "Calm Melody",
-      "fileName": "calm_melody.mp3"
+      "name": "Peaceful Piano",
+      "backgroundColor": "#9b87f5",
+      "imageUrl": "https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=400",
+      "musicUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
     },
     {
       "id": "2",
-      "musicName": "Digital Beep",
-      "fileName": "digital_beep.mp3"
+      "name": "Ocean Waves",
+      "backgroundColor": "#f59e0b",
+      "imageUrl": "https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=400",
+      "musicUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
     },
     {
       "id": "3",
-      "musicName": "Soft Piano",
-      "fileName": "soft_piano.mp3"
+      "name": "Morning Sun",
+      "backgroundColor": "#fbbf24",
+      "imageUrl": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400",
+      "musicUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
     },
     {
       "id": "4",
-      "musicName": "Relax Tone",
-      "fileName": "relax_tone.mp3"
+      "name": "Forest Rain",
+      "backgroundColor": "#86efac",
+      "imageUrl": "https://images.unsplash.com/photo-1511497584788-876760111969?w=400",
+      "musicUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3"
     },
     {
       "id": "5",
-      "musicName": "Alert Ring",
-      "fileName": "alert_ring.mp3"
+      "name": "Gentle Breeze",
+      "backgroundColor": "#7dd3fc",
+      "imageUrl": "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400",
+      "musicUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3"
     },
     {
       "id": "6",
-      "musicName": "Notification Pop",
-      "fileName": "notification_pop.mp3"
+      "name": "Sunset Calm",
+      "backgroundColor": "#fca5a5",
+      "imageUrl": "https://images.unsplash.com/photo-1495616811223-4d98c6e9c869?w=400",
+      "musicUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3"
     },
     {
       "id": "7",
-      "musicName": "Morning Bell",
-      "fileName": "morning_bell.mp3"
+      "name": "Cherry Blossom",
+      "backgroundColor": "#f9a8d4",
+      "imageUrl": "https://images.unsplash.com/photo-1522441815192-d9f04eb0615c?w=400",
+      "musicUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3"
     },
     {
       "id": "8",
-      "musicName": "Classic Tone",
-      "fileName": "classic_tone.mp3"
+      "name": "Mountain Mist",
+      "backgroundColor": "#a5f3fc",
+      "imageUrl": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400",
+      "musicUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3"
     },
     {
       "id": "9",
-      "musicName": "Soft Chime",
-      "fileName": "soft_chime.mp3"
+      "name": "Zen Garden",
+      "backgroundColor": "#86efac",
+      "imageUrl": "https://images.unsplash.com/photo-1528127269322-539801943592?w=400",
+      "musicUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3"
     },
     {
       "id": "10",
-      "musicName": "Wave Sound",
-      "fileName": "wave_sound.mp3"
+      "name": "Crystal Lake",
+      "backgroundColor": "#67e8f9",
+      "imageUrl": "https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=400",
+      "musicUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3"
     },
     {
       "id": "11",
-      "musicName": "Warm Echo",
-      "fileName": "warm_echo.mp3"
+      "name": "Golden Hour",
+      "backgroundColor": "#fde047",
+      "imageUrl": "https://images.unsplash.com/photo-1472120435266-53107fd0c44a?w=400",
+      "musicUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-11.mp3"
     },
     {
       "id": "12",
-      "musicName": "Crystal Drop",
-      "fileName": "crystal_drop.mp3"
+      "name": "Night Stars",
+      "backgroundColor": "#c4b5fd",
+      "imageUrl": "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400",
+      "musicUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-12.mp3"
+    },
+    {
+      "id": "13",
+      "name": "Rainy Night",
+      "backgroundColor": "#a855f7",
+      "imageUrl": "https://images.unsplash.com/photo-1528127269322-539801943592?w=400",
+      "musicUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-13.mp3"
+    },
+    {
+      "id": "14",
+      "name": "Snowy Day",
+      "backgroundColor": "#fde047",
+      "imageUrl": "https://images.unsplash.com/photo-1472120435266-53107fd0c44a?w=400",
+      "musicUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-14.mp3"
+    },
+    {
+      "id": "15",
+      "name": "Snowy Night",
+      "backgroundColor": "#000000",
+      "imageUrl": "https://images.unsplash.com/photo-1472120435266-53107fd0c44a?w=400",
+      "musicUrl": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-14.mp3"
     }
   ]
 }
