@@ -3,14 +3,20 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
+  PanResponder,
   ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
   Vibration,
   View,
 } from "react-native";
+
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const RADIUS = 120;
+const ITEM_SIZE = 54;
+const VISIBLE_ITEMS = 5; // Number of items visible in the arc
+const ARC_SPREAD = Math.PI; // Full semi-circle
 
 export default function VibroScreen() {
   const patterns = getVibrationPatterns();
@@ -19,18 +25,40 @@ export default function VibroScreen() {
   const [progress, setProgress] = useState(0);
   const [selectedPattern, setSelectedPattern] = useState<any>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [scrollOffset, setScrollOffset] = useState(0);
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const menuAnim = useRef(new Animated.Value(0)).current;
+  const scrollAnim = useRef(new Animated.Value(0)).current;
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const isRunningRef = useRef(false);
+  const lastScrollY = useRef(0);
 
-  const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderGrant: () => {
+        lastScrollY.current = scrollOffset;
+      },
+      onPanResponderMove: (_, gestureState) => {
+        const maxOffset = Math.max(0, patterns.length - VISIBLE_ITEMS);
+        const newOffset = lastScrollY.current - gestureState.dy / 40;
+        const clampedOffset = Math.max(0, Math.min(maxOffset, newOffset));
+        setScrollOffset(clampedOffset);
+      },
+      onPanResponderRelease: (_, gestureState) => {
+        const maxOffset = Math.max(0, patterns.length - VISIBLE_ITEMS);
+        const newOffset = lastScrollY.current - gestureState.dy / 40;
+        const clampedOffset = Math.max(0, Math.min(maxOffset, newOffset));
+        const rounded = Math.round(clampedOffset);
+        setScrollOffset(rounded);
+      },
+    })
+  ).current;
 
   useEffect(() => {
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
+      if (intervalRef.current) clearInterval(intervalRef.current);
       Vibration.cancel();
       isRunningRef.current = false;
     };
@@ -42,12 +70,16 @@ export default function VibroScreen() {
         toValue: 0,
         duration: 200,
         useNativeDriver: true,
-      }).start(() => setIsMenuOpen(false));
+      }).start(() => {
+        setIsMenuOpen(false);
+        setScrollOffset(0);
+      });
     } else {
       setIsMenuOpen(true);
-      Animated.timing(menuAnim, {
+      Animated.spring(menuAnim, {
         toValue: 1,
-        duration: 200,
+        friction: 6,
+        tension: 40,
         useNativeDriver: true,
       }).start();
     }
@@ -70,64 +102,45 @@ export default function VibroScreen() {
     setActivePatternId(id);
     setCurrentStep(0);
     setProgress(0);
-
-    const runPattern = () => {
-      if (!isRunningRef.current) return;
-
-      Vibration.vibrate(pattern, true);
-
-      const totalDuration = pattern.reduce((acc, val) => acc + val, 0);
-      let elapsed = 0;
-      let currentStepIndex = 0;
-
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
+    Vibration.vibrate(pattern, true);
+    const totalDuration = pattern.reduce((acc, val) => acc + val, 0);
+    let elapsed = 0;
+    let stepIndex = 0;
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    intervalRef.current = setInterval(() => {
+      if (!isRunningRef.current) {
+        if (intervalRef.current) clearInterval(intervalRef.current);
+        return;
       }
-
-      intervalRef.current = setInterval(() => {
-        if (!isRunningRef.current) {
-          if (intervalRef.current) {
-            clearInterval(intervalRef.current);
-            intervalRef.current = null;
-          }
-          return;
-        }
-
-        elapsed += 50;
-        const loopedElapsed = elapsed % totalDuration;
-        const newProgress = loopedElapsed / totalDuration;
-        setProgress(newProgress);
-
-        let timeSum = 0;
-        for (let i = 0; i < pattern.length; i++) {
-          timeSum += pattern[i];
-          if (loopedElapsed <= timeSum) {
-            if (currentStepIndex !== i) {
-              setCurrentStep(i);
-              currentStepIndex = i;
-
-              if (i % 2 === 0 && pattern[i] > 0) {
-                Animated.sequence([
-                  Animated.timing(pulseAnim, {
-                    toValue: 1.3,
-                    duration: 50,
-                    useNativeDriver: true,
-                  }),
-                  Animated.timing(pulseAnim, {
-                    toValue: 1,
-                    duration: 100,
-                    useNativeDriver: true,
-                  }),
-                ]).start();
-              }
+      elapsed += 50;
+      const looped = elapsed % totalDuration;
+      setProgress(looped / totalDuration);
+      let sum = 0;
+      for (let i = 0; i < pattern.length; i++) {
+        sum += pattern[i];
+        if (looped <= sum) {
+          if (stepIndex !== i) {
+            setCurrentStep(i);
+            stepIndex = i;
+            if (i % 2 === 0 && pattern[i] > 0) {
+              Animated.sequence([
+                Animated.timing(pulseAnim, {
+                  toValue: 1.2,
+                  duration: 50,
+                  useNativeDriver: true,
+                }),
+                Animated.timing(pulseAnim, {
+                  toValue: 1,
+                  duration: 100,
+                  useNativeDriver: true,
+                }),
+              ]).start();
             }
-            break;
           }
+          break;
         }
-      }, 50);
-    };
-
-    runPattern();
+      }
+    }, 50);
   };
 
   const handleVibrate = (pattern: number[], id: string, item: any) => {
@@ -136,11 +149,7 @@ export default function VibroScreen() {
       setSelectedPattern(null);
       return;
     }
-
-    if (activePatternId) {
-      stopVibration();
-    }
-
+    if (activePatternId) stopVibration();
     setSelectedPattern(item);
     startInfiniteVibration(pattern, id);
     toggleMenu();
@@ -155,67 +164,66 @@ export default function VibroScreen() {
     }
   };
 
-  const renderStepIndicator = (pattern: number[]) => {
-    const totalDuration = pattern.reduce((acc, val) => acc + val, 0);
-    const currentStepType =
-      currentStep % 2 === 0 && pattern[currentStep] > 0 ? "Vibration" : "Pause";
-    const currentStepDuration = pattern[currentStep] || 0;
+  const getPatternFrequency = (pattern: number[]) => {
+    const vibs = pattern.filter((_, i) => i % 2 === 0 && pattern[i] > 0);
+    if (!vibs.length) return "N/A";
+    const avg = vibs.reduce((a, b) => a + b, 0) / vibs.length;
+    return avg < 100 ? "Fast" : avg < 300 ? "Medium" : "Slow";
+  };
 
+  const renderStepIndicator = (pattern: number[]) => {
+    const type =
+      currentStep % 2 === 0 && pattern[currentStep] > 0 ? "Vibration" : "Pause";
+    const dur = pattern[currentStep] || 0;
     return (
       <View style={styles.stepContainer}>
         <View style={styles.statusRow}>
           <Text style={styles.statusText}>
-            Step {currentStep + 1}/{pattern.length} • {currentStepType} •{" "}
-            {currentStepDuration}ms
+            Step {currentStep + 1}/{pattern.length} • {type} • {dur}ms
           </Text>
           <View style={styles.loopBadge}>
             <Text style={styles.loopText}>∞ LOOP</Text>
           </View>
         </View>
-
         <View style={styles.progressBar}>
           <View
             style={[styles.progressFill, { width: `${progress * 100}%` }]}
           />
         </View>
-
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.stepsScrollContent}
+          contentContainerStyle={styles.stepsScroll}
         >
-          {pattern.map((duration, index) => {
-            const isActive = index === currentStep;
-            const isPast = index < currentStep;
-            const isVibration = index % 2 === 0 && duration > 0;
-
+          {pattern.map((d, i) => {
+            const active = i === currentStep;
+            const past = i < currentStep;
+            const isVib = i % 2 === 0 && d > 0;
             return (
               <View
-                key={index}
+                key={i}
                 style={[
                   styles.stepDot,
-                  isVibration ? styles.stepDotVibration : styles.stepDotPause,
-                  isPast && styles.stepDotPast,
-                  isActive && styles.stepDotActive,
+                  isVib ? styles.stepVib : styles.stepPause,
+                  past && styles.stepPast,
+                  active && styles.stepActive,
                 ]}
               >
-                {isActive && (
+                {active && (
                   <Animated.View
                     style={[
                       styles.activeRing,
-                      {
-                        transform: [{ scale: pulseAnim }],
-                      },
+                      { transform: [{ scale: pulseAnim }] },
                     ]}
                   />
                 )}
                 <Text
                   style={[
-                    styles.stepNumber,
-                    (isActive || isPast) && styles.stepNumberActive,
+                    styles.stepNum,
+                    (active || past) && styles.stepNumActive,
                   ]}
                 >
-                  {index + 1}
+                  {i + 1}
                 </Text>
               </View>
             );
@@ -225,187 +233,199 @@ export default function VibroScreen() {
     );
   };
 
-  const getPatternFrequency = (pattern: number[]) => {
-    const vibrationDurations = pattern.filter(
-      (_, index) => index % 2 === 0 && pattern[index] > 0
-    );
-    if (vibrationDurations.length === 0) return "N/A";
-
-    const avgVibration =
-      vibrationDurations.reduce((a, b) => a + b, 0) / vibrationDurations.length;
-
-    if (avgVibration < 100) return "Fast";
-    if (avgVibration < 300) return "Medium";
-    return "Slow";
-  };
-
   const renderSelectedPattern = () => {
     if (!selectedPattern) return null;
-
-    const isPlaying = activePatternId === selectedPattern.id;
-    const totalDuration = selectedPattern.pattern.reduce(
+    const playing = activePatternId === selectedPattern.id;
+    const total = selectedPattern.pattern.reduce(
       (a: number, b: number) => a + b,
       0
     );
-    const frequency = getPatternFrequency(selectedPattern.pattern);
-
+    const freq = getPatternFrequency(selectedPattern.pattern);
     return (
-      <View style={styles.selectedPatternContainer}>
-        <View style={[styles.selectedCard, isPlaying && styles.cardActive]}>
-          <View style={styles.selectedCardContent}>
-            <View style={styles.iconContainer}>
-              <Animated.View
-                style={[
-                  styles.icon,
-                  isPlaying && styles.iconActive,
-                  isPlaying && {
-                    transform: [{ scale: pulseAnim }],
-                  },
-                ]}
-              >
-                <Text style={styles.iconText}>{isPlaying ? "🔊" : "📳"}</Text>
-              </Animated.View>
-            </View>
-
-            <View style={styles.textContainer}>
-              <Text style={styles.patternName}>{selectedPattern.name}</Text>
-              <View style={styles.statsRow}>
-                <Text style={styles.patternStats}>
-                  {selectedPattern.pattern.length} steps • {totalDuration}ms •{" "}
-                  {frequency}
-                </Text>
-              </View>
-              <Text style={styles.patternPreview} numberOfLines={1}>
+      <View style={styles.selectedContainer}>
+        <View style={[styles.selectedCard, playing && styles.cardActive]}>
+          <View style={styles.cardContent}>
+            <Animated.View
+              style={[
+                styles.cardIcon,
+                playing && styles.cardIconActive,
+                playing && { transform: [{ scale: pulseAnim }] },
+              ]}
+            >
+              <Text style={styles.cardIconText}>{playing ? "🔊" : "📳"}</Text>
+            </Animated.View>
+            <View style={styles.cardText}>
+              <Text style={styles.cardTitle}>{selectedPattern.name}</Text>
+              <Text style={styles.cardStats}>
+                {selectedPattern.pattern.length} steps • {total}ms • {freq}
+              </Text>
+              <Text style={styles.cardPreview} numberOfLines={1}>
                 {selectedPattern.pattern
                   .map(
-                    (dur: number, idx: number) =>
-                      `${idx % 2 === 0 ? "V" : "P"}${dur}`
+                    (d: number, i: number) => `${i % 2 === 0 ? "V" : "P"}${d}`
                   )
                   .join(" ")}
               </Text>
             </View>
-
-            <View style={styles.playContainer}>
-              <TouchableOpacity
+            <TouchableOpacity
+              style={[styles.cardPlay, playing && styles.cardPlayActive]}
+              onPress={() =>
+                handleVibrate(
+                  selectedPattern.pattern,
+                  selectedPattern.id,
+                  selectedPattern
+                )
+              }
+            >
+              <Text
                 style={[
-                  styles.playButton,
-                  isPlaying && styles.playButtonActive,
+                  styles.cardPlayIcon,
+                  playing && styles.cardPlayIconActive,
                 ]}
-                onPress={() =>
-                  handleVibrate(
-                    selectedPattern.pattern,
-                    selectedPattern.id,
-                    selectedPattern
-                  )
-                }
               >
-                <Text
-                  style={[styles.playIcon, isPlaying && styles.playIconActive]}
-                >
-                  {isPlaying ? "⏹" : "▶"}
-                </Text>
-              </TouchableOpacity>
-            </View>
+                {playing ? "⏹" : "▶"}
+              </Text>
+            </TouchableOpacity>
           </View>
-
-          {isPlaying && renderStepIndicator(selectedPattern.pattern)}
+          {playing && renderStepIndicator(selectedPattern.pattern)}
         </View>
       </View>
     );
   };
 
-  const renderMenuItems = () => {
-    return patterns.map((item, index) => {
-      const translateY = menuAnim.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, -(index + 1) * 70],
-      });
+  const renderMenu = () => {
+    if (!isMenuOpen) return null;
+    const totalItems = patterns.length;
+    const maxOffset = Math.max(0, totalItems - VISIBLE_ITEMS);
+    const showScrollIndicator = totalItems > VISIBLE_ITEMS;
 
-      const opacity = menuAnim.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, 1],
-      });
+    return (
+      <View style={styles.menuWrapper} {...panResponder.panHandlers}>
+        <TouchableOpacity
+          style={styles.menuBackdrop}
+          onPress={toggleMenu}
+          activeOpacity={1}
+        />
 
-      return (
-        <Animated.View
-          key={item.id}
-          style={[
-            styles.menuItem,
-            {
-              transform: [{ translateY }],
-              opacity,
-            },
-          ]}
-        >
-          <TouchableOpacity
-            style={styles.menuItemButton}
-            onPress={() => handleVibrate(item.pattern, item.id, item)}
+        {showScrollIndicator && scrollOffset > 0 && (
+          <Animated.View
+            style={[
+              styles.scrollIndicator,
+              styles.scrollIndicatorLeft,
+              { opacity: menuAnim },
+            ]}
           >
-            <View style={styles.menuItemIcon}>
-              <Text style={styles.menuItemIconText}>
-                {activePatternId === item.id ? "🔊" : "📳"}
-              </Text>
-            </View>
-            <View style={styles.menuItemTextContainer}>
-              <Text style={styles.menuItemText}>{item.name}</Text>
-            </View>
-          </TouchableOpacity>
-        </Animated.View>
-      );
-    });
+            <Text style={styles.scrollArrow}>◀</Text>
+          </Animated.View>
+        )}
+
+        {showScrollIndicator && scrollOffset < maxOffset && (
+          <Animated.View
+            style={[
+              styles.scrollIndicator,
+              styles.scrollIndicatorRight,
+              { opacity: menuAnim },
+            ]}
+          >
+            <Text style={styles.scrollArrow}>▶</Text>
+          </Animated.View>
+        )}
+
+        {patterns.map((item, idx) => {
+          const visiblePosition = idx - scrollOffset;
+          if (visiblePosition < -0.5 || visiblePosition > VISIBLE_ITEMS - 0.5)
+            return null;
+
+          const angleStep =
+            VISIBLE_ITEMS > 1 ? ARC_SPREAD / (VISIBLE_ITEMS - 1) : 0;
+          const angle = Math.PI - visiblePosition * angleStep;
+          const x = RADIUS * Math.cos(angle);
+          const y = RADIUS * Math.sin(angle);
+
+          const distFromCenter = Math.abs(
+            visiblePosition - (VISIBLE_ITEMS - 1) / 2
+          );
+          const scaleFactor = 1 - distFromCenter * 0.1;
+          const opacityFactor = 1 - distFromCenter * 0.2;
+
+          const translateX = menuAnim.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, x],
+          });
+          const translateY = menuAnim.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, -y],
+          });
+          const scale = menuAnim.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0.3, scaleFactor],
+          });
+          const opacity = menuAnim.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, opacityFactor],
+          });
+
+          return (
+            <Animated.View
+              key={item.id}
+              style={[
+                styles.menuItem,
+                {
+                  transform: [{ translateX }, { translateY }, { scale }],
+                  opacity,
+                },
+              ]}
+            >
+              <TouchableOpacity
+                style={[
+                  styles.menuBtn,
+                  activePatternId === item.id && styles.menuBtnActive,
+                ]}
+                onPress={() => handleVibrate(item.pattern, item.id, item)}
+              >
+                <Text style={styles.menuBtnIcon}>
+                  {activePatternId === item.id ? "🔊" : "📳"}
+                </Text>
+              </TouchableOpacity>
+              <View style={styles.menuLabelContainer}>
+                <Text style={styles.menuLabel} numberOfLines={1}>
+                  {item.name}
+                </Text>
+              </View>
+            </Animated.View>
+          );
+        })}
+      </View>
+    );
   };
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#6366f1" />
-
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>📳 Vibration Patterns</Text>
-        <Text style={styles.headerSubtitle}>
-          {selectedPattern
-            ? `Selected: ${selectedPattern.name}`
-            : "Tap + button to select pattern"}
-          {activePatternId && " • Tap + to stop"}
-        </Text>
-      </View>
-
       {renderSelectedPattern()}
-
-      {!selectedPattern && (
-        <View style={styles.instructionsContainer}>
-          <Text style={styles.instructionsTitle}>How to Use</Text>
-          <Text style={styles.instructionsText}>
-            • Tap the + button to open pattern menu{"\n"}• Select a vibration
-            pattern from the menu{"\n"}• The selected pattern will start
-            automatically{"\n"}• Tap the + button again to stop vibration{"\n"}•
-            Tap pattern card to play/pause
-          </Text>
-        </View>
-      )}
-
-      {/* Custom Floating Action Button */}
-      <View style={styles.floatingContainer}>
-        {isMenuOpen && (
-          <TouchableOpacity
-            style={styles.overlay}
-            onPress={toggleMenu}
-            activeOpacity={1}
-          />
-        )}
-
-        {renderMenuItems()}
-
+      <View style={styles.fabContainer}>
+        {renderMenu()}
         <TouchableOpacity
-          style={[
-            styles.mainFloatingButton,
-            activePatternId && styles.mainFloatingButtonStop,
-          ]}
+          style={[styles.fab, activePatternId && styles.fabStop]}
           onPress={handleMainAction}
-          activeOpacity={0.8}
+          activeOpacity={0.85}
         >
-          <Text style={styles.mainFloatingButtonText}>
+          <Animated.Text
+            style={[
+              styles.fabText,
+              {
+                transform: [
+                  {
+                    rotate: menuAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: ["0deg", "45deg"],
+                    }),
+                  },
+                ],
+              },
+            ]}
+          >
             {activePatternId ? "⏹" : "+"}
-          </Text>
+          </Animated.Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -413,129 +433,51 @@ export default function VibroScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f8fafc",
-  },
-  header: {
-    backgroundColor: "#6366f1",
-    paddingTop: 50,
-    paddingBottom: 20,
-    paddingHorizontal: 20,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-    shadowColor: "#6366f1",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  headerTitle: {
-    fontSize: 26,
-    fontWeight: "800",
-    color: "#ffffff",
-    marginBottom: 4,
-  },
-  headerSubtitle: {
-    fontSize: 14,
-    color: "#e0e7ff",
-    fontWeight: "500",
-  },
-  selectedPatternContainer: {
-    padding: 20,
-    paddingTop: 16,
-  },
+  container: { flex: 1, backgroundColor: "#f8fafc" },
+  selectedContainer: { padding: 16 },
   selectedCard: {
-    backgroundColor: "#ffffff",
+    backgroundColor: "#fff",
     borderRadius: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 12,
-    elevation: 3,
     borderWidth: 2,
-    borderColor: "#f1f5f9",
+    borderColor: "#e2e8f0",
+    elevation: 4,
     overflow: "hidden",
   },
-  selectedCardContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 16,
-  },
-  cardActive: {
-    borderColor: "#6366f1",
-    shadowColor: "#6366f1",
-    shadowOpacity: 0.2,
-    shadowRadius: 16,
-    elevation: 6,
-  },
-  iconContainer: {
-    marginRight: 14,
-  },
-  icon: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+  cardActive: { borderColor: "#6366f1", elevation: 8 },
+  cardContent: { flexDirection: "row", alignItems: "center", padding: 16 },
+  cardIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     backgroundColor: "#eef2ff",
     justifyContent: "center",
     alignItems: "center",
+    marginRight: 14,
   },
-  iconActive: {
-    backgroundColor: "#dbeafe",
-  },
-  iconText: {
-    fontSize: 24,
-  },
-  textContainer: {
-    flex: 1,
-    marginRight: 8,
-  },
-  patternName: {
-    fontSize: 17,
+  cardIconActive: { backgroundColor: "#dbeafe" },
+  cardIconText: { fontSize: 26 },
+  cardText: { flex: 1 },
+  cardTitle: {
+    fontSize: 18,
     fontWeight: "700",
     color: "#1e293b",
     marginBottom: 4,
   },
-  statsRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 4,
-  },
-  patternStats: {
-    fontSize: 13,
-    color: "#64748b",
-    fontWeight: "500",
-  },
-  patternPreview: {
-    fontSize: 11,
-    color: "#94a3b8",
-    fontWeight: "600",
-    fontFamily: "monospace",
-  },
-  playContainer: {
-    marginLeft: 4,
-  },
-  playButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+  cardStats: { fontSize: 13, color: "#64748b", marginBottom: 2 },
+  cardPreview: { fontSize: 10, color: "#94a3b8", fontFamily: "monospace" },
+  cardPlay: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: "#eef2ff",
     justifyContent: "center",
     alignItems: "center",
   },
-  playButtonActive: {
-    backgroundColor: "#fee2e2",
-  },
-  playIcon: {
-    fontSize: 18,
-    color: "#6366f1",
-  },
-  playIconActive: {
-    color: "#dc2626",
-  },
+  cardPlayActive: { backgroundColor: "#fee2e2" },
+  cardPlayIcon: { fontSize: 20, color: "#6366f1" },
+  cardPlayIconActive: { color: "#dc2626" },
   stepContainer: {
-    padding: 16,
-    paddingTop: 12,
+    padding: 14,
     borderTopWidth: 1,
     borderTopColor: "#f1f5f9",
     backgroundColor: "#fafbff",
@@ -546,69 +488,39 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 8,
   },
-  statusText: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: "#475569",
-    flex: 1,
-  },
+  statusText: { fontSize: 12, fontWeight: "600", color: "#475569" },
   loopBadge: {
     backgroundColor: "#6366f1",
     paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-    marginLeft: 8,
+    paddingVertical: 3,
+    borderRadius: 10,
   },
-  loopText: {
-    fontSize: 10,
-    fontWeight: "800",
-    color: "#ffffff",
-    letterSpacing: 0.5,
-  },
+  loopText: { fontSize: 9, fontWeight: "800", color: "#fff" },
   progressBar: {
-    height: 6,
+    height: 5,
     backgroundColor: "#e2e8f0",
     borderRadius: 3,
-    marginBottom: 12,
+    marginBottom: 10,
     overflow: "hidden",
   },
-  progressFill: {
-    height: "100%",
-    backgroundColor: "#6366f1",
-    borderRadius: 3,
-  },
-  stepsScrollContent: {
-    flexDirection: "row",
-    gap: 8,
-    paddingVertical: 4,
-  },
+  progressFill: { height: "100%", backgroundColor: "#6366f1", borderRadius: 3 },
+  stepsScroll: { flexDirection: "row", gap: 6 },
   stepDot: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 2,
-    position: "relative",
   },
-  stepDotVibration: {
-    backgroundColor: "#dbeafe",
-    borderColor: "#93c5fd",
-  },
-  stepDotPause: {
-    backgroundColor: "#f3f4f6",
-    borderColor: "#d1d5db",
-  },
-  stepDotActive: {
+  stepVib: { backgroundColor: "#dbeafe", borderColor: "#93c5fd" },
+  stepPause: { backgroundColor: "#f3f4f6", borderColor: "#d1d5db" },
+  stepActive: {
     backgroundColor: "#6366f1",
     borderColor: "#4f46e5",
-    shadowColor: "#6366f1",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.6,
-    shadowRadius: 6,
     elevation: 4,
   },
-  stepDotPast: {
+  stepPast: {
     backgroundColor: "#a5b4fc",
     borderColor: "#818cf8",
     opacity: 0.7,
@@ -618,122 +530,86 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     backgroundColor: "#6366f1",
-    borderRadius: 16,
+    borderRadius: 14,
     opacity: 0.4,
   },
-  stepNumber: {
-    fontSize: 11,
-    fontWeight: "800",
-    color: "#64748b",
-  },
-  stepNumberActive: {
-    color: "#ffffff",
-  },
-  instructionsContainer: {
+  stepNum: { fontSize: 10, fontWeight: "800", color: "#64748b" },
+  stepNumActive: { color: "#fff" },
+  fabContainer: {
     position: "absolute",
-    top: "40%",
-    left: 20,
-    right: 20,
-    backgroundColor: "#ffffff",
-    padding: 20,
-    borderRadius: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 5,
-    borderWidth: 1,
-    borderColor: "#f1f5f9",
-  },
-  instructionsTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#1e293b",
-    marginBottom: 12,
-    textAlign: "center",
-  },
-  instructionsText: {
-    fontSize: 14,
-    color: "#64748b",
-    lineHeight: 22,
-    textAlign: "center",
-  },
-  // Custom Floating Action Styles
-  floatingContainer: {
-    position: "absolute",
-    bottom: 20,
-    right: 20,
-    alignItems: "center",
-  },
-  overlay: {
-    position: "absolute",
-    top: -1000,
-    left: -1000,
-    right: -1000,
-    bottom: -1000,
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
-  },
-  menuItem: {
-    position: "absolute",
+    bottom: 40,
+    left: 0,
     right: 0,
-    marginBottom: 10,
-  },
-  menuItemButton: {
-    flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#6366f1",
-    borderRadius: 25,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
+  },
+  menuWrapper: {
+    position: "absolute",
+    bottom: 0,
+    left: -SCREEN_WIDTH / 2 + 32,
+    right: -SCREEN_WIDTH / 2 + 32,
+    height: RADIUS + 100,
+    alignItems: "center",
+    justifyContent: "flex-end",
+  },
+  menuBackdrop: { ...StyleSheet.absoluteFillObject },
+  menuItem: { position: "absolute", alignItems: "center" },
+  menuBtn: {
+    width: ITEM_SIZE,
+    height: ITEM_SIZE,
+    borderRadius: ITEM_SIZE / 2,
+    backgroundColor: "#b4b5f9",
+    justifyContent: "center",
+    alignItems: "center",
     elevation: 4,
+    shadowColor: "#6366f1",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
-  menuItemIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 8,
+  menuBtnActive: { backgroundColor: "#6366f1" },
+  menuBtnIcon: { fontSize: 24 },
+  menuLabelContainer: {
+    position: "absolute",
+    top: ITEM_SIZE + 4,
+    backgroundColor: "rgba(0,0,0,0.7)",
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
   },
-  menuItemIconText: {
-    fontSize: 16,
-    color: "#ffffff",
-  },
-  menuItemTextContainer: {
-    backgroundColor: "#1e293b",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
-  },
-  menuItemText: {
-    color: "#ffffff",
-    fontSize: 12,
+  menuLabel: {
+    fontSize: 9,
+    color: "#fff",
     fontWeight: "600",
+    maxWidth: 70,
+    textAlign: "center",
   },
-  mainFloatingButton: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+  fab: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     backgroundColor: "#6366f1",
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
+    elevation: 10,
+    shadowColor: "#6366f1",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.5,
+    shadowRadius: 12,
   },
-  mainFloatingButtonStop: {
-    backgroundColor: "#dc2626",
+  fabStop: { backgroundColor: "#dc2626" },
+  fabText: { fontSize: 32, color: "#fff", fontWeight: "600" },
+  scrollIndicator: {
+    position: "absolute",
+    bottom: 80,
+    backgroundColor: "rgba(99,102,241,0.9)",
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 10,
   },
-  mainFloatingButtonText: {
-    fontSize: 24,
-    color: "#ffffff",
-    fontWeight: "bold",
-  },
+  scrollIndicatorLeft: { left: SCREEN_WIDTH / 2 - RADIUS - 50 },
+  scrollIndicatorRight: { right: SCREEN_WIDTH / 2 - RADIUS - 50 },
+  scrollArrow: { color: "#fff", fontSize: 12, fontWeight: "bold" },
 });
