@@ -4,30 +4,30 @@ import { isEmpty } from "../utils/helper";
 import { clearStore, getStoreValue } from "../utils/storage";
 
 // const baseUrl = "";
-const baseUrl = "";
+const baseUrl = "http://192.168.29.246:8000/";
 const apiUrl = baseUrl + "api/";
 
 export const imageUrl = () => `${baseUrl}storage/`;
 const TIMEOUT = 30000;
 
 export const apiActions = {
-  login: "auth/login",
-  register: "auth/register",
-  logout: "auth/logout",
-  forgot_password: "auth/forgot-password",
-  reset_password: "auth/reset-password",
+  login: "login",
+  register: "register",
+  logout: "logout",
+  // forgot_password: "auth/forgot-password",
+  // reset_password: "auth/reset-password",
   version_check: "app-version",
 };
 
 export const api = {
   get login() {
-    return `${apiUrl}auth/login`;
+    return `${apiUrl}login`;
   },
   get register() {
-    return `${apiUrl}auth/register`;
+    return `${apiUrl}register`;
   },
   get logout() {
-    return `${apiUrl}auth/logout`;
+    return `${apiUrl}logout`;
   },
 };
 
@@ -66,7 +66,7 @@ export const sendRequest = async ({
   headers,
   action = "login",
 }: {
-  method?: "get" | "post" | "put" | "delete";
+  method?: "get" | "post" | "put" | "delete" | "patch";
   url?: string;
   data?: any;
   headers?: any;
@@ -88,19 +88,15 @@ export const sendRequest = async ({
     if (response?.status === 200 || response?.status === 201) {
       return {
         success: true,
-        message:
-          response.data?.message || response.data?.responseText || "Success",
+        message: response.data.message,
         error: "",
-        data: response.data?.responseData || null,
+        data: response.data?.data || null,
       };
     }
 
     return {
       success: false,
-      message:
-        response?.data?.message ||
-        response.data?.responseText ||
-        "Unexpected error occurred",
+      message: response?.data?.message || "Unexpected error occurred",
       data: null,
     };
   } catch (error: any) {

@@ -10,6 +10,7 @@ import {
 
 import { SafeAreaView } from "react-native-safe-area-context";
 import { drawerMenuItems } from "../constants/menu";
+import { useUser } from "../context";
 import { colors, spacing, typography } from "../theme";
 import { useDrawer } from "./DrawerContext";
 
@@ -19,12 +20,16 @@ export const CustomDrawer = () => {
   const { isOpen, closeDrawer } = useDrawer();
   const router = useRouter();
   const pathname = usePathname();
-
+  const { logout } = useUser();
   const handleNav = (route: string) => {
     closeDrawer();
-    router.push(route as any);
+    router.replace(route as any);
   };
 
+  const handellogout = async () => {
+    await closeDrawer();
+    logout();
+  };
   if (!isOpen) return null;
 
   return (
@@ -69,7 +74,7 @@ export const CustomDrawer = () => {
           </View>
 
           <View style={styles.footer}>
-            <TouchableOpacity style={styles.logoutBtn}>
+            <TouchableOpacity style={styles.logoutBtn} onPress={handellogout}>
               <Text style={styles.logoutText}>🚪 Logout</Text>
             </TouchableOpacity>
           </View>

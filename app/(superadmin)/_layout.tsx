@@ -1,6 +1,6 @@
 import { Stack } from "expo-router";
 
-export default function AuthLayout() {
+export default function SuperAdminLayout() {
   return (
     <Stack
       screenOptions={{
@@ -10,9 +10,7 @@ export default function AuthLayout() {
         gestureDirection: "horizontal",
       }}
     >
-      <Stack.Screen name="login" />
-      <Stack.Screen name="register" />
-      <Stack.Screen name="appversion" />
+      <Stack.Screen name="dashboard" />
     </Stack>
   );
 }
